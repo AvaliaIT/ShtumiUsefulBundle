@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class DependentFilteredEntityType extends AbstractType
@@ -19,7 +20,20 @@ class DependentFilteredEntityType extends AbstractType
         $this->container = $container;
     }
 
+    /**
+     * Added for pre Symfony 2.7 compatibility
+     *
+     * @param OptionsResolverInterface $resolver
+     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $this->configureOptions($resolver);
+    }
+
+    /**
+     * @param OptionsResolver $resolver
+     */
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'empty_value'       => '',
@@ -29,12 +43,27 @@ class DependentFilteredEntityType extends AbstractType
         ));
     }
 
-    public function getParent()
+//    public function getParent()
+//    {
+//        return 'form';
+//    }
+
+    /**
+     * pre Symfony 3 compatibility
+     *
+     * @return string
+     */
+    public function getName()
     {
-        return 'form';
+        return $this->getBlockPrefix();
     }
 
-    public function getName()
+    /**
+     * Symfony 2.8+
+     *
+     * @return string
+     */
+    public function getBlockPrefix()
     {
         return 'shtumi_dependent_filtered_entity';
     }

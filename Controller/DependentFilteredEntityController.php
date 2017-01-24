@@ -17,7 +17,7 @@ class DependentFilteredEntityController extends Controller
     {
 
         $em = $this->get('doctrine')->getManager();
-        $request = $this->getRequest();
+        $request = $this->container->get('request_stack')->getCurrentRequest();
         $translator = $this->get('translator');
 
         $entity_alias = $request->get('entity_alias');
@@ -28,7 +28,7 @@ class DependentFilteredEntityController extends Controller
         $entity_inf = $entities[$entity_alias];
 
         if ($entity_inf['role'] !== 'IS_AUTHENTICATED_ANONYMOUSLY'){
-            if (false === $this->get('security.context')->isGranted( $entity_inf['role'] )) {
+            if (false === $this->get('security.authorization_checker')->isGranted( $entity_inf['role'] )) {
                 throw new AccessDeniedException();
             }
         }
@@ -81,7 +81,7 @@ class DependentFilteredEntityController extends Controller
     {
         /** @var \Doctrine\ORM\EntityManager $em */
         $em = $this->get('doctrine.orm.entity_manager');
-        $request = $this->get('request');
+        $request = $this->container->get('request_stack')->getCurrentRequest();
 
         $entity_alias = $request->get('entity_alias');
         $parent_id    = $request->get('parent_id');
@@ -91,7 +91,7 @@ class DependentFilteredEntityController extends Controller
         $entity_inf = $entities[$entity_alias];
 
         if ($entity_inf['role'] !== 'IS_AUTHENTICATED_ANONYMOUSLY'){
-            if (false === $this->get('security.context')->isGranted( $entity_inf['role'] )) {
+            if (false === $this->get('security.authorization_checker')->isGranted( $entity_inf['role'] )) {
                 throw new AccessDeniedException();
             }
         }
