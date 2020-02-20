@@ -18,7 +18,7 @@
 
     <route id="shtumi_dependent_filtered_entity" path="/shtumi_dependent_filtered_entity">
         <default key="_controller">%shtumi_dependent_filtered_entity_controller_route%</default>
-        <default key="maxItems">100</default>
+        <default key="maxItems">%shtumi_dependent_filtered_entity_max_items%</default>
     </route>
 
     <route id="shtumi_dependent_filtered_select2" path="/shtumi_dependent_filtered_select2">
