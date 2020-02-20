@@ -59,7 +59,7 @@ class DependentFilteredEntityController extends Controller
         }
 
 
-      $html = array();
+      $html = [];
       if ($empty_value !== false) {
         $elem = [
             'id' => '',
