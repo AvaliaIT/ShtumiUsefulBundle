@@ -9,11 +9,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DependentFilteredEntityController extends Controller
 {
 
-    public function getOptionsAction()
+    public function getOptionsAction($maxItems)
     {
 
         $em = $this->get('doctrine')->getManager();
@@ -57,22 +58,39 @@ class DependentFilteredEntityController extends Controller
             return new Response('<option value="">' . $translator->trans($entity_inf['no_result_msg']) . '</option>');
         }
 
-        $html = '';
-        if ($empty_value !== false)
-            $html .= '<option value="">' . $translator->trans($empty_value) . '</option>';
 
-        $getter =  $this->getGetterName($entity_inf['property']);
+      $html = [];
+      if ($empty_value !== false) {
+        $elem = [
+            'id' => '',
+            'text' => $translator->trans($empty_value)
+        ];
 
-        foreach($results as $result)
-        {
-            if ($entity_inf['property'])
-                $res = $result->$getter();
-            else $res = (string)$result;
+        $html[] = $elem;
+      }
 
-            $html = $html . sprintf("<option value=\"%d\">%s</option>",$result->getId(), $res);
+      $getter = $this->getGetterName($entity_inf['property']);
+
+      foreach ($results as $result) {
+        if ($entity_inf['property']) {
+          $res = $result->$getter();
+        } else {
+          $res = (string)$result;
         }
 
-        return new Response($html);
+        $elem       = [
+            'id' => $result->getId(),
+            'text' => $res
+        ];
+        $html[]     = $elem;
+      }
+      $response = [
+          'count' => count($results),
+          'data' => $html,
+          'maximum_dropdown_paymentinfo_elements' => $maxItems
+      ];
+
+      return new JsonResponse($response);
 
     }
 
